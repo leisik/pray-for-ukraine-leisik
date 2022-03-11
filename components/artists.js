@@ -3,6 +3,7 @@ import Link from "next/link";
 import { onSnapshot, collection } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import db from "../src/firebase";
+import storage from 'local-storage-fallback';
 
 export default function Artists() {
   const [toks, setToks] = useState([{ name: "Loading...", id: "initial" }]);
@@ -17,14 +18,14 @@ export default function Artists() {
         <div className="flex flex-col items-center justify-center">
             {toks.map(art =>
                 <Link href={'/token/' + art.id}>
-                    <div className='flex w-11/12 sm:w-full p-4 my-3 bg-main-right-light rounded-2xl cursor-pointer'>
+                    <div onClick={()=> {storage.setItem("currentId", art.id)}} className='flex w-11/12 sm:w-full p-4 my-3 bg-main-right-light rounded-2xl cursor-pointer'>
                         <div className='w-125px h-125px sm:w-200px sm:h-200px overflow-hidden cursor-pointer'>
                             <div className='rounded-xl hover:scale-110 transition ease-out duration-500'>
-                                <img key={art.cover_image} src={art.cover_image} className='w-full h-full rounded-xl'/>
+                                <img src={art.cover_image} className='w-full h-full rounded-xl'/>
                             </div>
                         </div>
                         <div className='flex flex-col w-[calc(100%-125px)] sm:w-[calc(100%-200px)] items-center justify-center'>
-                            <div key={art.cover_name} className='hidden sm:block text-2xl text-white break-all'>{art.artist_name} - {art.album_name}</div>
+                            <div className='hidden sm:block text-2xl text-white break-all'>{art.artist_name} - {art.album_name}</div>
                             <div className="flex flex-col sm:hidden w-full text-lg text-white">
                                 <div className="text-center">{art.album_name}</div>
                                 <div className="text-center text-gray-300">{art.artist_name}</div>

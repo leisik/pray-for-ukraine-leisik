@@ -4,16 +4,17 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from "react";
 import { onSnapshot, collection, getDoc, doc } from "firebase/firestore";
 import db from "../../src/firebase";
+import storage from 'local-storage-fallback';
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
 
 export default function Details() {
     const router = useRouter();
-    // const docRef = doc(db, 'artist-tokens', router.query.artist_name);
     const [token, setToken] = useState([{ name: "Loading...", id: "initial" }]);
     const [loading, setLoading] = useState(true);
     const [bsv, setBSV] = useState();
+    const [tokenId, setTokenId] = useState(storage.getItem('currentId'));
 
     useEffect(() => {
       const fetchData = async () => {
@@ -33,7 +34,7 @@ export default function Details() {
     },[]);
 
     useEffect(() => {
-        onSnapshot(doc(db, 'artist-tokens', router.query.artist_name), (doc) => {
+        onSnapshot(doc(db, 'artist-tokens', tokenId), (doc) => {
             setToken(doc.data());
             setLoading(false);
         })    
@@ -60,7 +61,7 @@ export default function Details() {
 
       <main className="flex-1 flex flex-col justify-center items-center py-4 pb-10 px-0 mt-0 lg:mt-20 ">
           {loading ? 
-            <div className='texy-3xl text-white'>Loadind</div> :
+            <div className='texy-3xl text-white'>Loading</div> :
             <div className='flex flex-col lg:flex-row w-full md:w-584px lg:w-1000px h-auto md:h-1028px lg:h-548px bg-main-right-light rounded-2xl p-4'>
                 <div className='block lg:hidden w-full text-center text-white text-2xl mb-4'>{token.album_name} #{token.uniqueNumber}</div>
                 <div className='w-full lg:w-512px h-full lg:h-512px'>
